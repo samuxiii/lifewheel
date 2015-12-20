@@ -9,10 +9,10 @@ class LifeWheel (tk.Frame):
         self.numPieSlices = numPieSlices
 
         extent = 360.0 / numPieSlices #portion in grades (real)
-        levels = 1
+        levels = 10
 
         for i in range(0, numPieSlices):
-            bbox = (100,100,300,300) #bbox = bouncing box
+            bbox = (100,100,500,500) #bbox = bouncing box
             PieSlice(bbox, i, extent, levels).draw(self.canvas)
 
 
@@ -29,11 +29,25 @@ class PieSlice (object):
 
     def draw(self, canvas):
         start = self.position * self.extent
-        #TODO: refactor loop to allow several levels
-        #      now this is not working properly
+        x0,y0,x1,y1 = self.bbox
+
+        #offset to resize the bbox according to the levels
+        offsetX = (x1 - x0)/(2 * self.levels)
+        offsetY = (y1 - y0)/(2 * self.levels)
+
         for i in range(0, self.levels):
             sliceName = self.name + "slice" + str(i)
-            self.slices.append(Slice(self.bbox, start, self.extent, sliceName))
+            #(i == 0) doesn't need to recalculate with offsets
+            if (i > 0):
+                x0 += offsetX
+                y0 += offsetY
+                x1 -= offsetX
+                y1 -= offsetY
+
+            tempBbox = x0, y0, x1, y1
+
+            print "Coord slice: %s" % (tempBbox,)
+            self.slices.append(Slice(tempBbox, start, self.extent, sliceName))
             item = self.slices[i].draw(canvas)
             canvas.tag_bind(item, "<1>", self.slices[i].mouse_click)
 
