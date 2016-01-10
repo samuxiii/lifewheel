@@ -1,18 +1,19 @@
 import Tkinter as tk
+import math
 
 class LifeWheel (tk.Frame):
 
     def __init__(self, parent, numPieSlices):
         tk.Frame.__init__(self, parent)
-        self.canvas = tk.Canvas(self, width=400,  height=400, background="bisque")
+        self.canvas = tk.Canvas(self, width=400,  height=400, background="gray")
         self.canvas.pack(fill="both", expand=True)
         self.numPieSlices = numPieSlices
 
         extent = 360.0 / numPieSlices #portion in grades (real)
         levels = 10
+        bbox = (100,100,500,500) #bbox = square bouncing box
 
         for i in range(0, numPieSlices):
-            bbox = (100,100,500,500) #bbox = bouncing box
             PieSlice(bbox, i, extent, levels).draw(self.canvas)
 
 
@@ -52,12 +53,34 @@ class PieSlice (object):
             self.slices[i].draw(canvas)
             self.slices[i].registerNotifier(self.turnOnLevel)
 
+        #write pie slice text
+        self.writeText(canvas, self.name)
+
     def turnOnLevel(self, canvas, level):
-        #TODO: levels are inverted... center is 9, external area is 0
+        #levels are inverted... center is 9, external area is 0
         for i in range(0, self.levels):
             self.slices[i].turnOff(canvas)
         for i in range(level, self.levels):
             self.slices[i].turnOn(canvas)
+
+    def writeText(self, canvas, text):
+        #calculating the (x,y) coordinates where to set the text
+        #surrounding circumference over the pieslice
+        x0,y0,x1,y1 = self.bbox
+        xcenter = (x1 - x0)/2 + x0
+        ycenter = (y1 - y0)/2 + y0
+        #
+        radius = xcenter - x0 + (x0/2) # (x0/2) pixels bigger than the slice radius
+        alpha_degrees = (self.extent/2) + self.position * self.extent
+        alpha_radians = (math.pi * alpha_degrees) / 180.0
+        xrelative = radius * math.cos(alpha_radians)
+        yrelative = radius * math.sin(alpha_radians)
+        print "r:%d, ar:%.2f, xr:%d, yr:%d" % (radius, alpha_radians, xrelative, yrelative)
+        #
+        x = xcenter + xrelative
+        y = ycenter + yrelative * (-1) # yrelative is reversed
+        print "text(%d,%d)" % (x, y)
+        canvas.create_text(x, y, text=text)
 
 
 class Slice (object):
@@ -85,7 +108,7 @@ class Slice (object):
 
     def turnOn(self, canvas):
         self.green = False
-        canvas.itemconfig(self.name, fill="green")
+        canvas.itemconfig(self.name, fill="blue")
 
     def turnOff(self, canvas):
         self.green = True
