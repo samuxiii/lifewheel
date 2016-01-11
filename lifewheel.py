@@ -23,7 +23,7 @@ class LifeWheel (tk.Frame):
 class PieSlice (object):
 
     def __init__(self, bbox, position, extent, levels, label, color):
-        print "\nInit PieSlice %d" % (position)
+        #print "\nInit PieSlice %d" % (position)
         self.bbox = bbox
         self.position = position
         self.extent = extent
@@ -53,7 +53,7 @@ class PieSlice (object):
 
             tempBbox = x0, y0, x1, y1
 
-            print "Coord slice: %s" % (tempBbox,)
+            #print "Coord slice: %s" % (tempBbox,)
             self.slices.append(Slice(tempBbox, start, self.extent, sliceName, level=i, color=self.color))
             self.slices[i].draw(canvas)
             self.slices[i].registerNotifier(self.turnOnLevel)
@@ -80,17 +80,17 @@ class PieSlice (object):
         alpha_radians = (math.pi * alpha_degrees) / 180.0
         xrelative = radius * math.cos(alpha_radians)
         yrelative = radius * math.sin(alpha_radians)
-        print "r:%d, ar:%.2f, xr:%d, yr:%d" % (radius, alpha_radians, xrelative, yrelative)
+        #print "r:%d, ar:%.2f, xr:%d, yr:%d" % (radius, alpha_radians, xrelative, yrelative)
         #
         x = xcenter + xrelative
         y = ycenter + yrelative * (-1) # yrelative is reversed
-        print "text(%d,%d)" % (x, y)
+        #print "text(%d,%d)" % (x, y)
         canvas.create_text(x, y, text=text)
 
 
 class Slice (object):
     def __init__(self, bbox, start, extent, name, level, color="blue"):
-        print "Init Slice %s" % (name)
+        #print "Init Slice %s" % (name)
         self.coords = bbox
         self.start = start
         self.extent = extent
@@ -104,7 +104,7 @@ class Slice (object):
         canvas.tag_bind(item, "<1>", self.mouse_click)
 
     def mouse_click(self, event):
-        print "I got a mouse click (%s)" % self.name
+        #print "I got a mouse click (%s)" % self.name
         #call to notifier() == PieSlice.turnOnLevel(canvas, level)
         self.notifier(event.widget, self.level)
 
