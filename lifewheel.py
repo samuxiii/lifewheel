@@ -3,29 +3,34 @@ import math
 
 class LifeWheel (tk.Frame):
 
-    def __init__(self, parent, numPieSlices):
+    def __init__(self, parent, labels):
         tk.Frame.__init__(self, parent)
         self.canvas = tk.Canvas(self, width=400,  height=400, background="gray")
         self.canvas.pack(fill="both", expand=True)
-        self.numPieSlices = numPieSlices
+        self.numPieSlices = len(labels)
 
-        extent = 360.0 / numPieSlices #portion in grades (real)
+        #constants
+        extent = 360.0 / self.numPieSlices #portion in grades (real)
         levels = 10
         bbox = (100,100,500,500) #bbox = square bouncing box
+        colors = ["pink", "red", "yellow", "blue", "cyan", "green", "magenta", "orange", "brown", "gray"]
 
-        for i in range(0, numPieSlices):
-            PieSlice(bbox, i, extent, levels).draw(self.canvas)
+        for i in range(0, self.numPieSlices):
+            c = ((len(colors) + i) % len(colors)) -1  #select the color
+            PieSlice(bbox, i, extent, levels, labels[i], colors[c]).draw(self.canvas)
 
 
 class PieSlice (object):
 
-    def __init__(self, bbox, position, extent, levels):
+    def __init__(self, bbox, position, extent, levels, label, color):
         print "\nInit PieSlice %d" % (position)
         self.bbox = bbox
         self.position = position
         self.extent = extent
         self.levels = levels
-        self.name = "pieslice" + str(position)
+        self.name = label.replace(" ","").replace("\n","") #remove spaces/newlines
+        self.label = label
+        self.color = color
         self.slices = []
 
     def draw(self, canvas):
@@ -49,12 +54,12 @@ class PieSlice (object):
             tempBbox = x0, y0, x1, y1
 
             print "Coord slice: %s" % (tempBbox,)
-            self.slices.append(Slice(tempBbox, start, self.extent, sliceName, level=i))
+            self.slices.append(Slice(tempBbox, start, self.extent, sliceName, level=i, color=self.color))
             self.slices[i].draw(canvas)
             self.slices[i].registerNotifier(self.turnOnLevel)
 
         #write pie slice text
-        self.writeText(canvas, self.name)
+        self.writeText(canvas, self.label)
 
     def turnOnLevel(self, canvas, level):
         #levels are inverted... center is 9, external area is 0
@@ -84,13 +89,14 @@ class PieSlice (object):
 
 
 class Slice (object):
-    def __init__(self, bbox, start, extent, name, level):
+    def __init__(self, bbox, start, extent, name, level, color="blue"):
         print "Init Slice %s" % (name)
         self.coords = bbox
         self.start = start
         self.extent = extent
         self.name = name
         self.level = level
+        self.color = color
         self.notifier = None #reference to parent method
 
     def draw(self, canvas, outline="black", fill="white"):
@@ -108,7 +114,7 @@ class Slice (object):
 
     def turnOn(self, canvas):
         self.green = False
-        canvas.itemconfig(self.name, fill="blue")
+        canvas.itemconfig(self.name, fill=self.color)
 
     def turnOff(self, canvas):
         self.green = True
@@ -117,6 +123,7 @@ class Slice (object):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    LifeWheel(root,7).pack(fill="both", expand=True)
+    labels = ["Finances", "Career", "Health", "Spirituality", "Community", "Physical\nEnvironment", "Fun", "Friends", "Family", "Partner/Lover"]
+    LifeWheel(root, labels).pack(fill="both", expand=True)
     root.mainloop()
 
