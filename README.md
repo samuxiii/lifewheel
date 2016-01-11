@@ -8,3 +8,7 @@ This simple application brings you an easy way to represent your life and it all
 
 ## How to execute
 `python lifewheel.py`
+
+## Copyright and license
+
+Code copyright 2016 Samuel Gil. Code released under [the MIT license](LICENSE)
