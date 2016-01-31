@@ -5,7 +5,8 @@ class LifeWheel (tk.Frame):
 
     def __init__(self, parent, labels):
         tk.Frame.__init__(self, parent)
-        self.canvas = tk.Canvas(self, width=400,  height=400, background="gray")
+        parent.title("LifeWheel")
+        self.canvas = tk.Canvas(self, width=600,  height=600, background="gray")
         self.canvas.pack(fill="both", expand=True)
         self.numPieSlices = len(labels)
 
