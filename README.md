@@ -1,6 +1,6 @@
 # LifeWheel
 
-This simple application brings you an easy way to represent your life and it allows you to think deeper about who you are
+This simple application brings an easy way to check where you spend your time and who you are.
 
 ## Screenshot
 ![Image of LifeWheel demo]
